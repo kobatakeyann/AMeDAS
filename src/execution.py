@@ -1,44 +1,54 @@
 import datetime
+
 import pandas as pd
+from script import (
+    Amedas10minDataAnalyzer,
+    AmedasDataAcquisition,
+    AmedasHourlyDataAnalyzer,
+    AmedasObservstionStations,
+)
 from util import generate_path
-from script import AmedasObservstionStations, AmedasDataAcquisition, Amedas10minDataAnalyzer, AmedasHourlyDataAnalyzer
-
-
 
 
 ################################################################################################
 # 最初の観測地点情報の取得
 def get_information_of_stations():
-   amedas_stations_info = AmedasObservstionStations()
-   amedas_stations_info.get_area_info()
-   amedas_stations_info.get_station_info()
-   amedas_stations_info.arange_data()
-   amedas_stations_info.acquire_observation_stations_dataframe()
+    amedas_stations_info = AmedasObservstionStations()
+    amedas_stations_info.get_area_info()
+    amedas_stations_info.get_station_info()
+    amedas_stations_info.arange_data()
+    amedas_stations_info.acquire_observation_stations_dataframe()
+
 
 # 連続した期間について、データをcsvファイルとして取得する関数
-def get_10min_data(start_date,end_date,stations):
-   dates = pd.date_range(start_date, end_date, freq='D')
-   amedas_10min_data = AmedasDataAcquisition(stations,dates=dates)
-   amedas_10min_data.make_10min_data_csv()
+def get_10min_data(start_date, end_date, stations):
+    dates = pd.date_range(start_date, end_date, freq="D")
+    amedas_10min_data = AmedasDataAcquisition(stations, dates=dates)
+    amedas_10min_data.make_10min_data_csv()
 
-def get_hourly_data(start_date,end_date,stations):
-   dates = pd.date_range(start_date, end_date, freq='D')
-   amedas_hourly_data = AmedasDataAcquisition(stations,dates=dates)
-   amedas_hourly_data.make_hourly_data_csv()
 
-def get_daily_data(start_date,end_date,stations):
-   months = pd.date_range(start_date, end_date, freq='MS')
-   amedas_daily_data = AmedasDataAcquisition(stations,months=months)
-   amedas_daily_data.make_daily_data_csv()
+def get_hourly_data(start_date, end_date, stations):
+    dates = pd.date_range(start_date, end_date, freq="D")
+    amedas_hourly_data = AmedasDataAcquisition(stations, dates=dates)
+    amedas_hourly_data.make_hourly_data_csv()
+
+
+def get_daily_data(start_date, end_date, stations):
+    months = pd.date_range(start_date, end_date, freq="MS")
+    amedas_daily_data = AmedasDataAcquisition(stations, months=months)
+    amedas_daily_data.make_daily_data_csv()
 
 
 def extract_station_name_from_prec_no(prec_no) -> list:
-   dir_name = generate_path("/data")
-   csv_file = "amedas_observation_points.csv"
-   stations_info = pd.read_csv(f"{dir_name}/{csv_file}",dtype=str) #観測地点情報の一覧
-   matched_df = stations_info[stations_info["prec_no"] == str(prec_no)]
-   stations = list(matched_df["enName"])
-   return stations
+    dir_name = generate_path("/data")
+    csv_file = "amedas_observation_points.csv"
+    stations_info = pd.read_csv(
+        f"{dir_name}/{csv_file}", dtype=str
+    )  # 観測地点情報の一覧
+    matched_df = stations_info[stations_info["prec_no"] == str(prec_no)]
+    stations = list(matched_df["enName"])
+    return stations
+
 
 ##################################################################################################
 
@@ -61,27 +71,77 @@ height_interval            (int)     : 標高のプロット間隔
 """
 
 PREC_NUMBER = {
-               "宗谷地方": 11, "上川地方": 12, "留萌地方": 13, "石狩地方": 14, "空知地方": 15, "後志地方": 16, "網走・北見・紋別地方": 17, 
-               "根室地方": 18, "釧路地方": 19, "十勝地方": 20, "胆振地方": 21, "日高地方": 22, "渡島地方": 23, "檜山地方": 24,
-               "青森県": 31, "秋田県": 32, "岩手県": 33, "宮城県": 34, "山形県": 35, "福島県": 36,
-               "茨城県": 40, "栃木県": 41, "群馬県": 42, "埼玉県": 43, "東京都": 44, "千葉県": 45, "神奈川県": 46,
-               "長野県": 48, "山梨県": 49, "静岡県": 50, "愛知県": 51, "岐阜県": 52, "三重県": 53,
-               "新潟県": 54, "富山県": 55, "石川県": 56, "福井県": 57, 
-               "滋賀県": 60, "京都府": 61, "大阪府": 62, "兵庫県": 63, "奈良県": 64, "和歌山県": 65, 
-               "岡山県": 66, "広島県": 67, "島根県": 68, "鳥取県": 69, "徳島県": 71, 
-               "香川県": 72, "愛媛県": 73, "高知県": 74, "山口県": 81, 
-               "福岡県": 82, "大分県": 83, "長崎県": 84, "佐賀県": 85, "熊本県": 86, "宮崎県": 87, "鹿児島県": 88, "沖縄県": 91,
-               "南極": 99,
-               }
+    "宗谷地方": 11,
+    "上川地方": 12,
+    "留萌地方": 13,
+    "石狩地方": 14,
+    "空知地方": 15,
+    "後志地方": 16,
+    "網走・北見・紋別地方": 17,
+    "根室地方": 18,
+    "釧路地方": 19,
+    "十勝地方": 20,
+    "胆振地方": 21,
+    "日高地方": 22,
+    "渡島地方": 23,
+    "檜山地方": 24,
+    "青森県": 31,
+    "秋田県": 32,
+    "岩手県": 33,
+    "宮城県": 34,
+    "山形県": 35,
+    "福島県": 36,
+    "茨城県": 40,
+    "栃木県": 41,
+    "群馬県": 42,
+    "埼玉県": 43,
+    "東京都": 44,
+    "千葉県": 45,
+    "神奈川県": 46,
+    "長野県": 48,
+    "山梨県": 49,
+    "静岡県": 50,
+    "愛知県": 51,
+    "岐阜県": 52,
+    "三重県": 53,
+    "新潟県": 54,
+    "富山県": 55,
+    "石川県": 56,
+    "福井県": 57,
+    "滋賀県": 60,
+    "京都府": 61,
+    "大阪府": 62,
+    "兵庫県": 63,
+    "奈良県": 64,
+    "和歌山県": 65,
+    "岡山県": 66,
+    "広島県": 67,
+    "島根県": 68,
+    "鳥取県": 69,
+    "徳島県": 71,
+    "香川県": 72,
+    "愛媛県": 73,
+    "高知県": 74,
+    "山口県": 81,
+    "福岡県": 82,
+    "大分県": 83,
+    "長崎県": 84,
+    "佐賀県": 85,
+    "熊本県": 86,
+    "宮崎県": 87,
+    "鹿児島県": 88,
+    "沖縄県": 91,
+    "南極": 99,
+}
 
 # 以下を設定
-starttime = datetime.datetime(2023,7,19,0,0)
-endtime = datetime.datetime(2023,7,20,0,0)
+starttime = datetime.datetime(2023, 7, 19, 0, 0)
+endtime = datetime.datetime(2023, 7, 20, 0, 0)
 lon_left, lon_right = 129.5, 131
-lat_lower, lat_upper = 33,34
+lat_lower, lat_upper = 33, 34
 lat_interval = 0.5
 lon_interval = 0.5
-prec_no_list = [82,83,85]
+prec_no_list = [82, 83, 85]
 
 zoom_level = 8
 deg_min_format = False
@@ -95,69 +155,126 @@ height_interval = 100
 ##########################################################################################################
 stations = []
 for prec_no in prec_no_list:
-   each_prec_stations = extract_station_name_from_prec_no(prec_no)
-   stations += each_prec_stations
+    each_prec_stations = extract_station_name_from_prec_no(prec_no)
+    stations += each_prec_stations
 
-def make_10min_mean_wind_figure(starttime,endtime,stations):
-   """
-   Args:
-     starttime(datetime) : 描画する期間の開始時刻(10分刻み) 
-     endtime(datetime) : 描画する期間の終了時刻(10分刻み) 
-     stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
-   """
-   start_date = starttime.date()
-   end_date = endtime.date()
-   get_10min_data(start_date, end_date, stations)
-   analysis = Amedas10minDataAnalyzer()
-   analysis.make_mean_wind_figure(starttime,endtime,lon_left,lon_right,lat_lower,lat_upper,zoom_level,
-                                  deg_min_format=deg_min_format,contour=contour,lon_interval=lon_interval,lat_interval=lat_interval,
-                                  height_max=height_max,height_min=height_min,height_interval=height_interval)
 
-def make_10min_temperature_figure(starttime,endtime,stations):
-   """
-   Args:
-     starttime(datetime) : 描画する期間の開始時刻(10分刻み) 
-     endtime(datetime) : 描画する期間の終了時刻(10分刻み) 
-     stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
-   """
-   start_date = starttime.date()
-   end_date = endtime.date()
-   get_10min_data(start_date, end_date, stations)
-   analysis = Amedas10minDataAnalyzer()
-   analysis.make_temperature_figure(starttime,endtime,lon_left,lon_right,lat_lower,lat_upper,zoom_level,
-                                    elevation=elevation,contour=contour,deg_min_format=deg_min_format,
-                                    lon_interval=lon_interval,lat_interval=lat_interval,
-                                    height_max=height_max,height_min=height_min,height_interval=height_interval)
+def make_10min_mean_wind_figure(starttime, endtime, stations):
+    """
+    Args:
+      starttime(datetime) : 描画する期間の開始時刻(10分刻み)
+      endtime(datetime) : 描画する期間の終了時刻(10分刻み)
+      stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
+    """
+    start_date = starttime.date()
+    end_date = endtime.date()
+    get_10min_data(start_date, end_date, stations)
+    analysis = Amedas10minDataAnalyzer()
+    analysis.make_mean_wind_figure(
+        starttime,
+        endtime,
+        lon_left,
+        lon_right,
+        lat_lower,
+        lat_upper,
+        zoom_level,
+        deg_min_format=deg_min_format,
+        contour=contour,
+        lon_interval=lon_interval,
+        lat_interval=lat_interval,
+        height_max=height_max,
+        height_min=height_min,
+        height_interval=height_interval,
+    )
 
-def make_hourly_mean_wind_figure(starttime,endtime,stations):
-   """
-   Args:
-     starttime(datetime) : 描画する期間の開始時刻(1時間刻み) 
-     endtime(datetime) : 描画する期間の終了時刻(1時間刻み) 
-     stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
-   """
-   start_date = starttime.date()
-   end_date = endtime.date()
-   get_hourly_data(start_date, end_date, stations)
-   analysis = AmedasHourlyDataAnalyzer()
-   analysis.make_mean_wind_figure(starttime,endtime,lon_left,lon_right,lat_lower,lat_upper,zoom_level,
-                                  deg_min_format=deg_min_format,contour=contour,lon_interval=lon_interval,lat_interval=lat_interval,
-                                    height_max=height_max,height_min=height_min,height_interval=height_interval)
 
-def make_hourly_temprature_figure(starttime,endtime,stations):
-   """
-   Args:
-     starttime(datetime) : 描画する期間の開始時刻(1時間刻み) 
-     endtime(datetime) : 描画する期間の終了時刻(1時間刻み) 
-     stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
-   """
-   start_date = starttime.date()
-   end_date = endtime.date()
-   get_hourly_data(start_date, end_date, stations)
-   analysis = AmedasHourlyDataAnalyzer()
-   analysis.make_temperature_figure(starttime,endtime,lon_left,lon_right,lat_lower,lat_upper,zoom_level,
-                                    deg_min_format=deg_min_format,elevation=elevation,contour=contour,lon_interval=lon_interval,lat_interval=lat_interval,
-                                    height_max=height_max,height_min=height_min,height_interval=height_interval)
+def make_10min_temperature_figure(starttime, endtime, stations):
+    """
+    Args:
+      starttime(datetime) : 描画する期間の開始時刻(10分刻み)
+      endtime(datetime) : 描画する期間の終了時刻(10分刻み)
+      stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
+    """
+    start_date = starttime.date()
+    end_date = endtime.date()
+    get_10min_data(start_date, end_date, stations)
+    analysis = Amedas10minDataAnalyzer()
+    analysis.make_temperature_figure(
+        starttime,
+        endtime,
+        lon_left,
+        lon_right,
+        lat_lower,
+        lat_upper,
+        zoom_level,
+        elevation=elevation,
+        contour=contour,
+        deg_min_format=deg_min_format,
+        lon_interval=lon_interval,
+        lat_interval=lat_interval,
+        height_max=height_max,
+        height_min=height_min,
+        height_interval=height_interval,
+    )
+
+
+def make_hourly_mean_wind_figure(starttime, endtime, stations):
+    """
+    Args:
+      starttime(datetime) : 描画する期間の開始時刻(1時間刻み)
+      endtime(datetime) : 描画する期間の終了時刻(1時間刻み)
+      stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
+    """
+    start_date = starttime.date()
+    end_date = endtime.date()
+    get_hourly_data(start_date, end_date, stations)
+    analysis = AmedasHourlyDataAnalyzer()
+    analysis.make_mean_wind_figure(
+        starttime,
+        endtime,
+        lon_left,
+        lon_right,
+        lat_lower,
+        lat_upper,
+        zoom_level,
+        deg_min_format=deg_min_format,
+        contour=contour,
+        lon_interval=lon_interval,
+        lat_interval=lat_interval,
+        height_max=height_max,
+        height_min=height_min,
+        height_interval=height_interval,
+    )
+
+
+def make_hourly_temprature_figure(starttime, endtime, stations):
+    """
+    Args:
+      starttime(datetime) : 描画する期間の開始時刻(1時間刻み)
+      endtime(datetime) : 描画する期間の終了時刻(1時間刻み)
+      stations(list) : プロットする観測地点の英語名称(../data/amedas_observation_points.txt を参照)
+    """
+    start_date = starttime.date()
+    end_date = endtime.date()
+    get_hourly_data(start_date, end_date, stations)
+    analysis = AmedasHourlyDataAnalyzer()
+    analysis.make_temperature_figure(
+        starttime,
+        endtime,
+        lon_left,
+        lon_right,
+        lat_lower,
+        lat_upper,
+        zoom_level,
+        deg_min_format=deg_min_format,
+        elevation=elevation,
+        contour=contour,
+        lon_interval=lon_interval,
+        lat_interval=lat_interval,
+        height_max=height_max,
+        height_min=height_min,
+        height_interval=height_interval,
+    )
 
 
 # 降水量、複数日の平均気温・平均風向風速もok
@@ -171,7 +288,7 @@ def make_hourly_temprature_figure(starttime,endtime,stations):
 # make_10min_temperature_figure(starttime,endtime,stations)
 # make_hourly_mean_wind_figure(starttime,endtime,stations)
 # make_hourly_temprature_figure(starttime,endtime,stations)
-  
+
 """
 def change_to_date(each_date):
   year = int(each_date[0:4])
