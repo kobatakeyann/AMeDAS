@@ -14,11 +14,11 @@ class AreaInfoContainer(NamedTuple):
 
 
 class AmedasStationsParser:
-    def __init__(self, html: BeautifulSoup) -> None:
-        self._html = html
+    def __init__(self, area_html: bytes) -> None:
+        self._area_html = BeautifulSoup(area_html, features="html.parser")
 
-    def extract_areas(self) -> AreaInfoContainer:
-        elements = self._html.find_all("area")
+    def get_area_affiliations(self) -> AreaInfoContainer:
+        elements = self._area_html.find_all("area")
         area_names, prec_no_list = [], []
         for element in elements:
             area_name = element["alt"]
@@ -27,7 +27,9 @@ class AmedasStationsParser:
             prec_no_list.append(prec_no)
         return AreaInfoContainer(area_names, prec_no_list)
 
-    def get_stations_info(self, area_info: AreaInfoContainer) -> pd.DataFrame:
+    def attach_block_number(
+        self, area_info: AreaInfoContainer
+    ) -> pd.DataFrame:
         BASE_URL = "https://www.data.jma.go.jp/obd/stats/etrn/select/"
         stations_info = []
         area_names = area_info.area_name
@@ -47,10 +49,10 @@ class AmedasStationsParser:
                 )[0]
                 stations_info.append(
                     {
-                        "station": station_name,
                         "area": area_name,
+                        "station": station_name,
                         "prec_no": prec_no,
                         "block_no": block_no,
                     }
                 )
-        return pd.DataFrame(stations_info)
+        return pd.DataFrame(stations_info).drop_duplicates().dropna()

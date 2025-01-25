@@ -6,17 +6,27 @@ from stations.parser import AmedasStationsParser
 
 class AmedasStationsDataProcessor:
     def __init__(self) -> None:
-        self._stations_html = AmedasStationsFetcher.fetch_station_page_html()
+        self._affiliations_html = (
+            AmedasStationsFetcher.fetch_station_affiliation_html()
+        )
+        self._detailed_json = AmedasStationsFetcher.fetch_stations_info()
 
     def save_stations_info(self, output_path: str) -> None:
-        """Fetch, process, and save AMeDAS stations information to a csv file.
+        """Fetch, process, merge, and save AMeDAS stations information to a csv file.
 
         Args:
             output_path (str): Path to save the information as a csv file.
         """
-        parser = AmedasStationsParser(self._stations_html)
-        area_info = parser.extract_areas()
-        stations_info = parser.get_stations_info(area_info)
-        arranger = AmedasStationsArranger(stations_info)
-        arranger.clean_stations_info()
-        arranger.save_stations_info_to_csv(output_path)
+        # Parse the affiliation html.
+        parser = AmedasStationsParser(self._affiliations_html)
+        affiliation_info = parser.get_area_affiliations()
+        affiliated_df = parser.attach_block_number(affiliation_info)
+        # Arrange the detailed information.
+        arranger = AmedasStationsArranger(affiliated_df, self._detailed_json)
+        arranger.convert_latlon_to_decimal()
+        arranger.add_observed_elements_columns()
+        # Merge with the affiliation information.
+        merged_df = arranger.merge_stations_info()
+        arranger.save_stations_info_to_csv(
+            df=merged_df, output_path=output_path
+        )
