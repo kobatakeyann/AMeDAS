@@ -2,12 +2,22 @@ import numpy as np
 import pandas as pd
 
 
-class AmedasStationsArranger:
+class StationsArranger:
     def __init__(
         self, affiliations_df: pd.DataFrame, detailed_json: dict
     ) -> None:
         self._affiliations_df = affiliations_df.copy()
         self._detailed_df = pd.DataFrame(detailed_json).transpose()
+
+    def add_latlon_columns_for_keys(self) -> None:
+        self._detailed_df["lat_degree"] = self._detailed_df["lat"].str[0]
+        self._detailed_df["lat_minute"] = (
+            self._detailed_df["lat"].str[1].astype(float)
+        )
+        self._detailed_df["lon_degree"] = self._detailed_df["lon"].str[0]
+        self._detailed_df["lon_minute"] = (
+            self._detailed_df["lon"].str[1].astype(float)
+        )
 
     def convert_latlon_to_decimal(self) -> None:
         self._detailed_df["lat"] = (
@@ -43,11 +53,27 @@ class AmedasStationsArranger:
         df_affiliations = self._affiliations_df.copy().reset_index(drop=True)
         merged_df = df_affiliations.merge(
             df_detailed,
-            left_on="station",
-            right_on="kjName",
+            left_on=[
+                "station",
+                "knName",
+                "lat_degree",
+                "lat_minute",
+                "lon_degree",
+                "lon_minute",
+            ],
+            right_on=[
+                "kjName",
+                "knName",
+                "lat_degree",
+                "lat_minute",
+                "lon_degree",
+                "lon_minute",
+            ],
             how="left",
         )
-        return merged_df.dropna()
+        return merged_df.dropna().drop(
+            columns=["lat_degree", "lat_minute", "lon_degree", "lon_minute"]
+        )
 
     def save_stations_info_to_csv(
         self, df: pd.DataFrame, output_path: str
