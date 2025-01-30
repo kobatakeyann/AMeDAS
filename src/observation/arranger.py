@@ -54,15 +54,19 @@ class ObservedDataArranger:
                     self._df.insert(15, "最多風向", np.nan)
                 return
 
-    def add_station_name_to_columns(self, station_name: str) -> None:
+    def add_id_to_columns(self, station_name: str, block_no: str) -> None:
         match self._type:
             case "10min":
-                columns = COLUMNS_10MIN
+                elements = COLUMNS_10MIN
             case "hourly":
-                columns = COLUMNS_HOURLY
+                elements = COLUMNS_HOURLY
             case "daily":
-                columns = COLUMNS_DAILY
-        self._df.columns = [f"{column}_{station_name}" for column in columns]
+                elements = COLUMNS_DAILY
+        multi_index = pd.MultiIndex.from_tuples(
+            tuples=[(block_no, station_name, elem) for elem in elements],
+            names=["block_no", "station", "element"],
+        )
+        self._df.columns = multi_index
 
     @staticmethod
     def replace_missing_data(df: pd.DataFrame) -> pd.DataFrame:

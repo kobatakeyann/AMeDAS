@@ -39,7 +39,7 @@ class ObservedDataFetcher:
 
     def get_target_urls(self) -> list[str]:
         urls = []
-        self._station_names = []
+        self._station_dict = {}
         station_manager = StationDataManager()
         for blocK_no in self._block_numbers:
             affiliation = station_manager.get_affiliation(blocK_no)
@@ -47,7 +47,7 @@ class ObservedDataFetcher:
                 affiliation.prec_no, affiliation.block_no, self._type
             )
             urls.append(target_url)
-            self._station_names.append(affiliation.station_name)
+            self._station_dict[affiliation.block_no] = affiliation.station_name
         return urls
 
     def create_base_dataframe(self, target_date: date) -> pd.DataFrame:
@@ -69,8 +69,8 @@ class ObservedDataFetcher:
                 interval = "D"
                 start = date(target_date.year, target_date.month, 1)
         df = pd.DataFrame(
-            pd.date_range(start=start, periods=data_num, freq=interval),
-            columns=["datetime"],
+            data=pd.date_range(start=start, periods=data_num, freq=interval),
+            columns=pd.MultiIndex.from_tuples([("", "", "datetime")]),
         )
         return df
 
@@ -93,11 +93,13 @@ class ObservedDataFetcher:
                 case "daily":
                     query_params = f"year={year}&month={month}&day=&view="
             each_station_df = []
-            for station_name, base_url in zip(self._station_names, urls):
+            for (block_no, station), base_url in zip(
+                self._station_dict.items(), urls
+            ):
                 url = f"{base_url}&{query_params}"
                 processor = ObservedDataArranger(page_url=url, type=self._type)
                 processor.add_lacking_columns()
-                processor.add_station_name_to_columns(station_name)
+                processor.add_id_to_columns(station, block_no)
                 each_station_df.append(processor.df)
                 sleep(0.05)
             df = pd.concat([base_df] + each_station_df, axis=1)
