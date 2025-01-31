@@ -10,11 +10,16 @@ class StationsDataProcessor:
         )
         self._detailed_json = StationsFetcher.fetch_stations_info()
 
-    def save_stations_info(self, output_path: str) -> None:
+    def save_stations_info(
+        self,
+        output_path: str,
+        include_inactive_stations: bool = False,
+    ) -> None:
         """Fetch, process, merge, and save AMeDAS stations information to a csv file.
 
         Args:
             output_path (str): Path to save the information as a csv file.
+            include_inactive_stations (bool) : If True, include inactive stations now in the output.
         """
         # Parse the affiliation html.
         parser = StationsParser(self._affiliations_html)
@@ -28,7 +33,9 @@ class StationsDataProcessor:
         arranger.add_observed_elements_columns()
 
         # Merge with the affiliation information.
-        merged_df = arranger.merge_stations_info()
+        merged_df = arranger.merge_stations_info(
+            include_inactive_stations=include_inactive_stations
+        )
         arranger.save_stations_info_to_csv(
             df=merged_df, output_path=output_path
         )

@@ -46,24 +46,21 @@ class StationsArranger:
         self._detailed_df[added_columns] = pd.DataFrame(
             observed_elements, index=self._detailed_df.index
         )
-        self._detailed_df.drop(columns=["elems"], inplace=True)
 
-    def merge_stations_info(self) -> pd.DataFrame:
-        df_detailed = self._detailed_df.copy()
+    def merge_stations_info(
+        self, include_inactive_stations: bool = False
+    ) -> pd.DataFrame:
+        df_detailed = self._detailed_df.copy().drop(columns="knName")
         df_affiliations = self._affiliations_df.copy().reset_index(drop=True)
         merged_df = df_affiliations.merge(
             df_detailed,
             left_on=[
-                "station",
-                "knName",
                 "lat_degree",
                 "lat_minute",
                 "lon_degree",
                 "lon_minute",
             ],
             right_on=[
-                "kjName",
-                "knName",
                 "lat_degree",
                 "lat_minute",
                 "lon_degree",
@@ -71,9 +68,12 @@ class StationsArranger:
             ],
             how="left",
         )
-        return merged_df.dropna().drop(
+        merged_df = merged_df.drop(
             columns=["lat_degree", "lat_minute", "lon_degree", "lon_minute"]
         )
+        if include_inactive_stations:
+            return merged_df
+        return merged_df.dropna()
 
     def save_stations_info_to_csv(
         self, df: pd.DataFrame, output_path: str
