@@ -81,6 +81,7 @@ class ObservedDataFetcher:
         if (self._months is not None) and (self._type == "daily"):
             dates = self._months
         for date in dates:
+            print(f"Now fetching data of {date} … ", end="")
             base_df = self.create_base_dataframe(date)
             year, month, day = DateArranger(date).get_padded_date()
             match self._type:
@@ -104,6 +105,7 @@ class ObservedDataFetcher:
                 sleep(0.05)
             df = pd.concat([base_df] + each_station_df, axis=1)
             each_date_df.append(df)
+            print("done!")
         return pd.concat(each_date_df, axis=0).reset_index(drop=True)
 
     def arrange_fetched_df(self, df: pd.DataFrame) -> pd.DataFrame:
