@@ -2,7 +2,9 @@ from typing import NamedTuple
 
 import numpy as np
 import pandas as pd
+from pydantic import BaseModel
 
+from constants.missing_value import MISSING_VALUE
 from util.path import generate_path
 
 
@@ -11,7 +13,7 @@ class Location(NamedTuple):
     lat: float
 
 
-class StationInfo(NamedTuple):
+class StationInfo(BaseModel, frozen=True):
     station_name: str
     lon: float
     lat: float
@@ -64,5 +66,4 @@ class AmedasDataAnalyzer:
         return self.df.index.to_list()
 
     def _missing_value_to_nan(self) -> None:
-        MISSING_VALUE = -999.9
         self.df = self.df.replace(MISSING_VALUE, np.nan)
