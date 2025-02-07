@@ -1,11 +1,12 @@
-from typing import Literal, NamedTuple
+from typing import Literal
 
 import pandas as pd
+from pydantic import BaseModel
 
 from util.path import generate_path
 
 
-class StationInfoContainer(NamedTuple):
+class StationInfoContainer(BaseModel, frozen=True):
     prec_no: str
     station_name: str
     block_no: str
@@ -25,9 +26,9 @@ class StationDataManager:
     def get_affiliation(self, block_no: str) -> StationInfoContainer:
         affiliation = self._df[self._df["block_no"] == block_no]
         return StationInfoContainer(
-            affiliation["prec_no"].item(),
-            affiliation["enName"].item(),
-            block_no,
+            prec_no=affiliation["prec_no"].item(),
+            station_name=affiliation["enName"].item(),
+            block_no=block_no,
         )
 
     def generate_station_url(

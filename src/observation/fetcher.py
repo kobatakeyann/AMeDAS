@@ -8,8 +8,8 @@ import pandas as pd
 
 from observation.arranger import ObservedDataArranger
 from observation.station import StationDataManager
+from util.date_formatter import PaddedDate
 from util.path import generate_path
-from util.time import DateArranger
 
 
 class ObservedDataFetcher:
@@ -83,7 +83,8 @@ class ObservedDataFetcher:
         for date in dates:
             print(f"Now fetching data of {date} … ", end="")
             base_df = self.create_base_dataframe(date)
-            year, month, day = DateArranger(date).get_padded_date()
+            padded = PaddedDate(date)
+            year, month, day = padded.year, padded.month, padded.day
             match self._type:
                 case "10min":
                     query_params = (

@@ -3,13 +3,13 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 
-from observation.constants import (
+from constants.missing_value import MISSING_VALUE
+from constants.observation_elems import (
     COLUMNS_10MIN,
     COLUMNS_DAILY,
     COLUMNS_HOURLY,
-    MISSING_VALUE,
-    WIND_DIRECTION,
 )
+from constants.wind_direction import WIND_DIRECTION
 
 
 class ObservedDataArranger:
