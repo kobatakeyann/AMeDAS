@@ -32,7 +32,17 @@ class AmedasDataAnalyzer:
         self._missing_value_to_nan()
         self._set_stations_dict_attr()
 
-    def get_station_names(self) -> list[str]:
+    @property
+    def block_numbers(self) -> list[str]:
+        BLOCK_NO_COLUMN_LEVEL = 0
+        return (
+            self.df.columns.get_level_values(BLOCK_NO_COLUMN_LEVEL)
+            .unique()
+            .to_list()
+        )
+
+    @property
+    def station_names(self) -> list[str]:
         STATION_COLUMN_LEVEL = 1
         level_0_columns = self.df.columns.get_level_values(
             STATION_COLUMN_LEVEL

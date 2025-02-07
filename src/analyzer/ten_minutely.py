@@ -8,7 +8,7 @@ from analyzer.base import AmedasDataAnalyzer
 from analyzer.type import ObservedValuesContainer
 
 
-class TenminDataAnalyzer(AmedasDataAnalyzer):
+class TenMinuteDataAnalyzer(AmedasDataAnalyzer):
     def __init__(self, csv_filepath: str) -> None:
         super().__init__(csv_filepath)
 
