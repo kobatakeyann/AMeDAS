@@ -1,10 +1,6 @@
 import cartopy.crs as ccrs
 import cartopy.io.shapereader as shapereader
 import matplotlib.pyplot as plt
-from basemap.helper.level_calculation import (
-    get_clabel_levels,
-    get_contour_levels,
-)
 from cartopy.feature import NaturalEarthFeature
 from cartopy.mpl.geoaxes import GeoAxes
 from cartopy.mpl.ticker import LatitudeFormatter, LongitudeFormatter
