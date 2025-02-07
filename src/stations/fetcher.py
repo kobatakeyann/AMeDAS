@@ -16,6 +16,6 @@ class StationsFetcher:
         return fetch_data(url=StationsFetcher.JMA_STATIONS_PAGE_URL)
 
     @staticmethod
-    def fetch_stations_info() -> dict:
+    def fetch_stations_json() -> dict:
         response = fetch_data(StationsFetcher.STATIONS_DETAILS_URL)
         return json.loads(response)

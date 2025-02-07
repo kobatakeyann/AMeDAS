@@ -8,7 +8,7 @@ class StationsDataProcessor:
         self._affiliations_html = (
             StationsFetcher.fetch_station_affiliation_html()
         )
-        self._detailed_json = StationsFetcher.fetch_stations_info()
+        self._detailed_json = StationsFetcher.fetch_stations_json()
 
     def save_stations_info(
         self,
@@ -19,7 +19,7 @@ class StationsDataProcessor:
 
         Args:
             output_path (str): Path to save the information as a csv file.
-            include_inactive_stations (bool) : If True, include inactive stations now in the output.
+            include_inactive_stations (bool) : If True, include currently inactive stations in the output.
         """
         # Parse the affiliation html.
         parser = StationsParser(self._affiliations_html)
