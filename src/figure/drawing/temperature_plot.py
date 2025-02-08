@@ -9,9 +9,9 @@ from cartopy.mpl.geoaxes import GeoAxes
 
 from analyzer.hourly import HourlyDataAnalyzer
 from analyzer.ten_minutely import TenMinuteDataAnalyzer
+from config.figure.base_map import LAT_BOTTOM, LAT_TOP, LON_LEFT, LON_RIGHT
 from config.figure.figure import TITLE_NAME
 from config.figure.gif import GIF_INTERVAL_TIME
-from constants.missing_value import MISSING_VALUE
 from figure.drawing.factory import FigureFactory
 from figure.drawing.helper.color import get_color_from_value
 from figure.drawing.methods import PlotMethods
@@ -79,12 +79,16 @@ class TemperaturePlot(FigureFactory):
             value_with_coords.lat,
             value_with_coords.value,
         ):
-            if str(value) != MISSING_VALUE:
+            if (
+                not np.isnan(value)
+                and LAT_BOTTOM <= lat <= LAT_TOP
+                and LON_LEFT <= lon <= LON_RIGHT
+            ):
                 color = get_color_from_value(value)
                 space = 0.03
                 target_ax.plot_text_label(lon, lat + space, str(value), color)
                 target_ax.ax.plot(
-                    lon, lat, marker=".", color="navy", markersize=5
+                    lon, lat, marker=".", color="navy", markersize=3
                 )
         target_ax.set_title(title_name=self._get_title(jst_time))
         padded_dt = PaddedDatetime(jst_time)
@@ -147,7 +151,11 @@ class TemperaturePlot(FigureFactory):
             ax = cast(GeoAxes, basefig.get_axes()[0])
             target_ax = PlotMethods(ax)
             for lon, lat, value in zip(lons, lats, temp_rows.values):
-                if not np.isnan(value):
+                if (
+                    not np.isnan(value)
+                    and LAT_BOTTOM <= lat <= LAT_TOP
+                    and LON_LEFT <= lon <= LON_RIGHT
+                ):
                     value = round(value, 1)
                     color = get_color_from_value(value)
                     space = 0.03
@@ -155,7 +163,7 @@ class TemperaturePlot(FigureFactory):
                         lon, lat + space, str(value), color
                     )
                     target_ax.ax.plot(
-                        lon, lat, marker=".", color="navy", markersize=5
+                        lon, lat, marker=".", color="navy", markersize=3
                     )
             if exe_time == "00:00:00":
                 exe_time = "24:00:00"
@@ -179,3 +187,13 @@ class TemperaturePlot(FigureFactory):
                 interval_time=GIF_INTERVAL_TIME,
             )
             print("Successfully made gif!")
+
+
+a = TemperaturePlot(
+    "/work6/kobatake_yusuke/analysis/weather/amedas/data/hourly_data/sample.csv",
+    "hourly",
+)
+from util.path import generate_path
+
+dir = generate_path("/img/sample")
+a.make_all_figures("temperature", dir, True)

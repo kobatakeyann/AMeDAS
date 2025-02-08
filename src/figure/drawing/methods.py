@@ -32,7 +32,7 @@ class PlotMethods:
             transform=ccrs.PlateCarree(),
             horizontalalignment="center",
             verticalalignment="center",
-            weight="bold",
+            clip_on=True,
         )
 
     def plot_vector(

@@ -10,13 +10,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from config.figure.base_map import GRIDLINE_COLOR, GRIDLINE_WIDTH
 from config.figure.elevation_map import (
     CONTOUR_COLOR,
-    CONTOUR_LABEL_SIZE,
     CONTOUR_WIDTH,
     HEIGHT_MAX,
 )
 from elevation.meshdata import Elevation
 from figure.basemap.helper.level_calculation import (
-    get_clabel_levels,
     get_contour_levels,
     get_shade_levels,
 )
@@ -117,7 +115,6 @@ class Basemap:
     def plot_elevation_with_contour(
         self,
         zoom_level: int,
-        is_labeled_contour: bool = False,
     ) -> None:
         gpv_fetcher = Elevation(
             lon_left=self._area_range.lon_left,
@@ -137,13 +134,6 @@ class Basemap:
             linewidths=CONTOUR_WIDTH,
             colors=CONTOUR_COLOR,
         )
-        if is_labeled_contour:
-            self.ax.clabel(
-                self.contours,
-                levels=get_clabel_levels(),
-                fmt="%.{0[0]}f".format([0]),
-                fontsize=CONTOUR_LABEL_SIZE,
-            )
 
     def draw_gridlines(self) -> None:
         gl = self.ax.gridlines(

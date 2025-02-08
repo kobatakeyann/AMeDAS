@@ -12,6 +12,7 @@ from config.figure.base_map import (
     elevation_contour,
     elevation_shade,
     grid_line,
+    paint_land,
 )
 from config.figure.elevation_map import ZOOM_LEVEL
 from figure.basemap.helper.type import RectangleArea
@@ -36,8 +37,9 @@ def make_base_map(ax: GeoAxes) -> GeoAxes:
     if elevation_shade:
         basemap_ax.plot_elevation_with_shading(zoom_level=ZOOM_LEVEL)
     if elevation_contour:
-        basemap_ax.paint_land()
         basemap_ax.plot_elevation_with_contour(zoom_level=ZOOM_LEVEL)
+    if paint_land:
+        basemap_ax.paint_land()
     if grid_line:
         basemap_ax.draw_gridlines()
     if deg_min_ticks:
