@@ -187,13 +187,3 @@ class TemperaturePlot(FigureFactory):
                 interval_time=GIF_INTERVAL_TIME,
             )
             print("Successfully made gif!")
-
-
-a = TemperaturePlot(
-    "/work6/kobatake_yusuke/analysis/weather/amedas/data/hourly_data/sample.csv",
-    "hourly",
-)
-from util.path import generate_path
-
-dir = generate_path("/img/sample")
-a.make_all_figures("temperature", dir, True)
