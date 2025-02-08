@@ -176,13 +176,15 @@ class TemperaturePlot(FigureFactory):
                 title = f"composite {TITLE_NAME} {hour_before}00-{hour}00JST"
             target_ax.set_title(title_name=title)
             target_ax.save_figure(
-                fig=basefig, save_dir=save_dir, filename=filename
+                fig=basefig,
+                save_dir=f"{save_dir}/composite/temperature",
+                filename=filename,
             )
             plt.cla()
             plt.close()
         if make_gif:
             make_gif_from_imgs(
-                img_dir_path=save_dir,
+                img_dir_path=f"{save_dir}/composite/temperature",
                 saved_gif_path=f"{save_dir}/composite.gif",
                 interval_time=GIF_INTERVAL_TIME,
             )
