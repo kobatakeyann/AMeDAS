@@ -1,12 +1,12 @@
 from datetime import date
 
-from functions.composite import (
+from tools.composite import (
     visualize_composite_temperature,
     visualize_composite_wind,
 )
-from functions.observation_data_fetcher import fetch_observation_data
-from functions.station_fetcher import fetch_stations_info
-from functions.visualization import vizualize_temperature, vizualize_wind
+from tools.observation_data_fetcher import fetch_observation_data
+from tools.station_fetcher import fetch_stations_info
+from tools.visualization import vizualize_temperature, vizualize_wind
 from util.path import generate_path
 
 saving_csv_filename = "sample.csv"
