@@ -18,6 +18,7 @@ from elevation.meshdata import Elevation
 from figure.basemap.helper.level_calculation import (
     get_clabel_levels,
     get_contour_levels,
+    get_shade_levels,
 )
 from figure.basemap.helper.ticks_formatter import (
     format_lat_ticks,
@@ -67,6 +68,20 @@ class Basemap:
             ),
         )
 
+    def paint_land(self) -> None:
+        self.ax.add_feature(
+            NaturalEarthFeature(
+                "physical",
+                "land",
+                "10m",
+                facecolor="lightgreen",
+                edgecolor="black",
+                alpha=0.6,
+                linewidth=0.2,
+                zorder=0,
+            ),
+        )
+
     def plot_elevation_with_shading(self, zoom_level: int) -> None:
         gpv_fetcher = Elevation(
             lon_left=self._area_range.lon_left,
@@ -86,7 +101,7 @@ class Basemap:
             alpha=0.7,
             transform=ccrs.PlateCarree(),
             cmap=cmap,
-            levels=get_contour_levels(),
+            levels=get_shade_levels(),
             extend="max",
         )
         shade.set_clim(vmin=150, vmax=HEIGHT_MAX)

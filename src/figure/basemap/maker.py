@@ -31,17 +31,18 @@ def make_base_map(ax: GeoAxes) -> GeoAxes:
         ),
     )
     basemap_ax.plot_coastline()
-    basemap_ax.plot_prefecture_borders()
     basemap_ax.set_ticks(LON_TICK_INTERVAL, LAT_TICK_INTERVAL)
     basemap_ax.paint_sea()
     if elevation_shade:
         basemap_ax.plot_elevation_with_shading(zoom_level=ZOOM_LEVEL)
     if elevation_contour:
+        basemap_ax.paint_land()
         basemap_ax.plot_elevation_with_contour(zoom_level=ZOOM_LEVEL)
     if grid_line:
         basemap_ax.draw_gridlines()
     if deg_min_ticks:
         basemap_ax.to_deg_min_ticks()
+    basemap_ax.plot_prefecture_borders()
     basemap_ax.narrow_down_the_plot_area(
         LON_LEFT, LON_RIGHT, LAT_BOTTOM, LAT_TOP
     )
