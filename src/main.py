@@ -9,10 +9,8 @@ from functions.station_fetcher import fetch_stations_info
 from functions.visualization import vizualize_temperature, vizualize_wind
 from util.path import generate_path
 
-saving_csv_filename = "high_fukuoka.csv"
-observation_data_csv_filepath = generate_path(
-    "/data/10min_data/high_fukuoka.csv"
-)
+saving_csv_filename = "sample.csv"
+observation_data_csv_filepath = generate_path("/data/10min_data/sample.csv")
 saving_composite_img_dir = generate_path("/img")
 type = "hourly"
 dates = [date(2022, 8, 8), date(2022, 8, 10)]

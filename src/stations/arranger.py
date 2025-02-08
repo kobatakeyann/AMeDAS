@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -78,4 +80,6 @@ class StationsArranger:
     def save_stations_info_to_csv(
         self, df: pd.DataFrame, output_path: str
     ) -> None:
+        saving_dir = Path(output_path).parent
+        saving_dir.mkdir(parents=True, exist_ok=True)
         df.to_csv(output_path, index=False, encoding="UTF-8")

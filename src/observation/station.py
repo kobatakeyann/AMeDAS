@@ -3,6 +3,7 @@ from typing import Literal
 import pandas as pd
 from pydantic import BaseModel
 
+from config.scraping.output_path import STATIONS_CSV
 from util.path import generate_path
 
 
@@ -14,9 +15,7 @@ class StationInfoContainer(BaseModel, frozen=True):
 
 class StationDataManager:
     def __init__(self) -> None:
-        stations_csv_path = generate_path(
-            "/data/stations_information/stations.csv"
-        )
+        stations_csv_path = STATIONS_CSV
         self._df = pd.read_csv(stations_csv_path, dtype=str)
 
     @property

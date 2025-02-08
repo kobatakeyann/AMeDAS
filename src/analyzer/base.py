@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from pydantic import BaseModel
 
+from config.scraping.output_path import STATIONS_CSV
 from constants.missing_value import MISSING_VALUE
 from util.path import generate_path
 
@@ -21,10 +22,7 @@ class StationInfo(BaseModel, frozen=True):
 
 class AmedasDataAnalyzer:
     def __init__(self, csv_filepath: str) -> None:
-        STATIONS_CSV_FILEPATH = generate_path(
-            "/data/stations_information/stations.csv"
-        )
-        self._stations_df = pd.read_csv(STATIONS_CSV_FILEPATH, dtype=str)
+        self._stations_df = pd.read_csv(STATIONS_CSV, dtype=str)
 
         self.df = pd.read_csv(csv_filepath, header=[0, 1, 2], index_col=0)
         self.df.columns.names = ["block_no", "station", "element"]
