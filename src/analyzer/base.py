@@ -60,7 +60,7 @@ class AmedasDataAnalyzer:
                 lon=location.lon,
                 lat=location.lat,
             )
-        self._station_dict = station_dict
+        self.station_dict = station_dict
 
     def get_lonlat(self, block_no: str) -> Location:
         match_row = self._stations_df[
@@ -76,4 +76,4 @@ class AmedasDataAnalyzer:
         return self.df.index.to_list()
 
     def _missing_value_to_nan(self) -> None:
-        self.df = self.df.replace(MISSING_VALUE, np.nan)
+        self.df = self.df.replace(float(MISSING_VALUE), np.nan)

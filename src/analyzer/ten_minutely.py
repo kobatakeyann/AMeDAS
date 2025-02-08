@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import cast
+from warnings import filterwarnings
 
 import pandas as pd
 from pandas import DatetimeIndex
@@ -9,15 +10,17 @@ from analyzer.type import ObservedValuesContainer
 
 
 class TenMinuteDataAnalyzer(AmedasDataAnalyzer):
+    filterwarnings("ignore")
+
     def __init__(self, csv_filepath: str) -> None:
         super().__init__(csv_filepath)
 
     def get_observed_values(
         self, datetime: datetime, block_no: str, target_var: str
     ) -> ObservedValuesContainer:
-        station = self._station_dict[block_no].station_name
-        lon = self._station_dict[block_no].lon
-        lat = self._station_dict[block_no].lat
+        station = self.station_dict[block_no].station_name
+        lon = self.station_dict[block_no].lon
+        lat = self.station_dict[block_no].lat
         str_datetime = datetime.strftime("%Y-%m-%d %H:%M:%S")
         each_station_vars: pd.Series = cast(
             pd.Series, self.df.loc[str_datetime, block_no]
@@ -32,9 +35,26 @@ class TenMinuteDataAnalyzer(AmedasDataAnalyzer):
     def pivot_by_time_and_date(
         self, block_no: str, target_var: str
     ) -> pd.DataFrame:
-        station = self._station_dict[block_no].station_name
+        station = self.station_dict[block_no].station_name
         df = self.df[(block_no, station)].copy()
         assert isinstance(df.index, DatetimeIndex)
         df["date"] = df.index.date
         df["time"] = df.index.time
         return df.pivot(index="time", columns="date", values=target_var)
+
+    def get_average_by_time(self, block_no: str, target_var: str) -> pd.Series:
+        pivotted_df = self.pivot_by_time_and_date(block_no, target_var)
+        df = pivotted_df.mean(axis=1)
+        return self.sort_index_in_correct_order(df)
+
+    def get_std_by_time(self, block_no: str, target_var: str) -> pd.Series:
+        pivotted_df = self.pivot_by_time_and_date(block_no, target_var)
+        df = pivotted_df.std(axis=1)
+        return self.sort_index_in_correct_order(df)
+
+    def sort_index_in_correct_order(self, df: pd.Series) -> pd.Series:
+        df = pd.concat([df.iloc[1:], pd.Series(df.iloc[0])])
+        df.index = pd.date_range(
+            start="00:10:00", freq="10min", periods=144
+        ).strftime("%H:%M:%S")
+        return df
