@@ -31,16 +31,6 @@ def main():
     # vizualize_temperature(
     #     observed_data_path=observation_data_csv_filepath, type=type
     # )
-    # visualize_composite_temperature(
-    #     observed_data_path=observation_data_csv_filepath,
-    #     type=type,
-    #     save_dir=saving_composite_img_dir,
-    # )
-    # visualize_composite_wind(
-    #     observed_data_path=observation_data_csv_filepath,
-    #     type=type,
-    #     save_dir=saving_composite_img_dir,
-    # )
 
 
 if __name__ == "__main__":
